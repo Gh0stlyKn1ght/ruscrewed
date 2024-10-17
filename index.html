@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Have fun!</title>
+
+    <!-- Load Noto Sans Font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* General body styles */
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #000;
+            overflow: hidden;
+            font-family: 'Noto Sans', sans-serif;
+        }
+
+        /* Main content container */
+        .container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            font-size: 2rem;
+            line-height: 1.5;
+            color: white;
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none; /* Disable text selection */
+            pointer-events: none; /* Make content unclickable */
+        }
+
+        .glow {
+            color: white;
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0% { color: white; }
+            50% { color: red; }
+            100% { color: white; }
+        }
+
+        /* Particle canvas in the background */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Footer styles */
+        footer {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 0.9rem;
+        }
+
+        /* Buy Me a Coffee button */
+        .coffee-button {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 3;
+            background-color: #FFDD00;
+            color: black;
+            padding: 10px 15px;
+            border-radius: 25px;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 1rem;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .coffee-button:hover {
+            transform: scale(1.1);
+        }
+
+        /* Retro Date & Time and Clear Button - Bottom-right corner */
+        .date-time-container {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .date-time {
+            font-family: 'Courier New', monospace;
+            color: #00FF00;
+            font-size: 1.5rem;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .clear-button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .clear-button:hover {
+            background-color: darkred;
+        }
+    </style>
+</head>
+<body>
+    <!-- Particle canvas for background effects -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- Buy Me a Coffee Button -->
+    <a 
+        class="coffee-button" 
+        href="https://www.buymeacoffee.com/lordnikon2600" 
+        target="_blank" 
+        rel="noopener noreferrer"
+    >
+        Buy Me a Coffee ☕
+    </a>
+
+    <div class="container">
+        <p>Hope you're having a <span class="glow">grRRrrReat!</span> semester.</p> 
+    </div>
+
+    <footer>
+        © 2024 u/lordnikon2600.
+    </footer>
+
+    <!-- Retro Date and Time + Clear Button -->
+    <div class="date-time-container">
+        <div class="date-time" id="dateTime"></div>
+        <button class="clear-button" id="clearButton">clear</button>
+    </div>
+
+    <script>
+        // Set up the canvas and context
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Adjust canvas size when the window is resized
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Particle class to handle individual "R" particles
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 20 + 10;
+                this.speedX = Math.random() * 2 - 1;
+                this.speedY = Math.random() * 2 - 1;
+                this.opacity = 0.5;
+            }
+
+            draw() {
+                ctx.font = `${this.size}px Arial`;
+                ctx.fillStyle = `rgba(255, 0, 0, ${this.opacity})`;
+                ctx.fillText('R', this.x, this.y);
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+        }
+
+        let particlesArray = [];
+
+        function createParticles(x, y) {
+            for (let i = 0; i < 5; i++) {
+                particlesArray.push(new Particle(x, y));
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particlesArray.forEach((particle, index) => {
+                particle.update();
+                particle.draw();
+                if (particle.size <= 1) particlesArray.splice(index, 1);
+            });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('mousemove', (event) => {
+            createParticles(event.x, event.y);
+        });
+
+        window.addEventListener('touchmove', (event) => {
+            event.preventDefault(); // Prevent scrolling on touch
+            const touch = event.touches[0];
+            createParticles(touch.clientX, touch.clientY);
+        });
+
+        animate();
+
+        document.getElementById('clearButton').addEventListener('click', () => {
+            particlesArray = [];
+        });
+
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('dateTime').textContent = now.toLocaleString('en-US', {
+                dateStyle: 'medium',
+                timeStyle: 'medium'
+            });
+        }, 1000);
+    </script>
+
+    <!-- 
+        Cereal Killer: You could sit at home and do nothing, 
+        and your name goes through 17 computers a day. Orwell is here now.
+    -->
+</body>
+</html>
