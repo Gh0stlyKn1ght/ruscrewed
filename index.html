@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1">
-    <title>Because Knowledge!</title>
+    <title>Follow the 🐇</title>
 
+   
     <!-- Load Noto Sans Font from Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
 
+    <!-- Load Font Awesome for Icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
     <style>
-        /* General body styles */
         body {
             margin: 0;
             height: 100vh;
@@ -22,7 +25,6 @@
             font-family: 'Noto Sans', sans-serif;
         }
 
-        /* Main content container */
         .container {
             position: relative;
             z-index: 2;
@@ -34,22 +36,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            user-select: none; /* Disable text selection */
-            pointer-events: none; /* Make content unclickable */
+            animation: fadeOut 30s forwards; /* Paragraph will fade out in 30 seconds */
         }
 
-        .glow {
-            color: white;
-            animation: glow 2s infinite;
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
         }
 
-        @keyframes glow {
-            0% { color: white; }
-            50% { color: red; }
-            100% { color: white; }
-        }
-
-        /* Particle canvas in the background */
         canvas {
             position: absolute;
             top: 0;
@@ -59,7 +53,6 @@
             z-index: 1;
         }
 
-        /* Footer styles */
         footer {
             position: relative;
             z-index: 2;
@@ -69,9 +62,30 @@
             text-align: center;
             padding: 15px 0;
             font-size: 0.9rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
         }
 
-        /* Buy Me a Coffee button */
+        .social-icon {
+            color: white;
+            font-size: 1.5rem;
+            transition: transform 0.3s, color 0.3s;
+        }
+
+        .social-icon:hover {
+            transform: scale(1.2);
+        }
+
+        .fa-reddit:hover {
+            color: #FF4500;
+        }
+
+        .fa-github:hover {
+            color: #4078c0;
+        }
+
         .coffee-button {
             position: fixed;
             top: 15px;
@@ -92,15 +106,15 @@
             transform: scale(1.1);
         }
 
-        /* Retro Date & Time and Clear Button - Bottom-right corner */
         .date-time-container {
             position: fixed;
             bottom: 15px;
             right: 15px;
             z-index: 3;
             display: flex;
-            align-items: center;
-            gap: 10px;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
         }
 
         .date-time {
@@ -130,10 +144,8 @@
     </style>
 </head>
 <body>
-    <!-- Particle canvas for background effects -->
     <canvas id="particleCanvas"></canvas>
 
-    <!-- Buy Me a Coffee Button -->
     <a 
         class="coffee-button" 
         href="https://www.buymeacoffee.com/lordnikon2600" 
@@ -148,29 +160,32 @@
     </div>
 
     <footer>
-        © 2024 u/lordnikon2600.
+        <span>© 2024 u/lordnikon2600.</span>
+        <a href="https://www.reddit.com" target="_blank" class="social-icon">
+            <i class="fab fa-reddit"></i>
+        </a>
+        <a href="https://github.com" target="_blank" class="social-icon">
+            <i class="fab fa-github"></i>
+        </a>
     </footer>
 
-    <!-- Retro Date and Time + Clear Button -->
     <div class="date-time-container">
         <div class="date-time" id="dateTime"></div>
         <button class="clear-button" id="clearButton">clear</button>
     </div>
 
     <script>
-        // Set up the canvas and context
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Adjust canvas size when the window is resized
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         });
+
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        // Particle class to handle individual "R" particles
         class Particle {
             constructor(x, y) {
                 this.x = x;
@@ -219,7 +234,7 @@
         });
 
         window.addEventListener('touchmove', (event) => {
-            event.preventDefault(); // Prevent scrolling on touch
+            event.preventDefault();
             const touch = event.touches[0];
             createParticles(touch.clientX, touch.clientY);
         });
